@@ -26,7 +26,7 @@ let s:source = {
 \  "default_action" : "open",
 \  "action_table" : {
 \    "open" : {
-\      "description" : "open with gist with vim",
+\      "description" : "open with vim",
 \      "is_selectable" : 0,
 \    },
 \    "browser" : {
