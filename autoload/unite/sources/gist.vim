@@ -62,16 +62,7 @@ function! s:source.action_table.open.func(candidate)
 endfunction
 
 function! s:source.action_table.browser.func(candidate)
-  let url = printf("https://gist.github.com/%s", a:candidate.action__gist)
-  if has('win32')
-    exe "!start rundll32 url.dll,FileProtocolHandler " . url
-  elseif has('mac')
-    call system("open '" . url . "' &")
-  elseif executable('xdg-open')
-    call system("xdg-open '" . url  . "' &")
-  else
-    call system("firefox '" . url . "' &")
-  endif
+  call OpenBrowser(printf("https://gist.github.com/%s", a:candidate.action__gist))
 endfunction
 
 let &cpo = s:save_cpo
