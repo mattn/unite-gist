@@ -1,6 +1,8 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
+let s:system = function(get(g:, 'webapi#system_function', 'system'))
+
 function! s:format_gist(gist)
   let files = sort(keys(a:gist.files))
   if empty(files)
@@ -37,18 +39,17 @@ let s:source = {
 \}
 
 function! s:source.gather_candidates(args, context)
-  let gists = gist#list("mine")
-  if len(gists) == 0
-    if !exists('g:github_user')
-      let user = substitute(s:system('git config --get github.user'), "\n", '', '')
-      if strlen(user) == 0
-        let user = $GITHUB_USER
-      end
-    else
-      let user = g:github_user
-    endif
-    let gists = gist#list(user)
+  if get(g:, 'gist_show_privates')
+    let user = 'mine'
+  elseif !exists('g:github_user')
+    let user = substitute(s:system('git config --get github.user'), "\n", '', '')
+    if strlen(user) == 0
+      let user = $GITHUB_USER
+    end
+  else
+    let user = g:github_user
   endif
+  let gists = gist#list(user)
   return map(gists, '{
         \ "abbr": s:format_gist(v:val),
         \ "word": v:val["id"],
