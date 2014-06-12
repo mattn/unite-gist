@@ -49,7 +49,11 @@ function! s:source.gather_candidates(args, context)
   else
     let user = g:github_user
   endif
-  let gists = gist#list(user)
+  if get(g:, 'unite_gist_recursive_loading', 0)
+    let gists = gist#list_recursively(user)
+  else
+    let gists = gist#list(user)
+  endif
   return map(gists, '{
         \ "abbr": s:format_gist(v:val),
         \ "word": v:val["id"],
