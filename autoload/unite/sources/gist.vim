@@ -49,7 +49,23 @@ function! s:source.gather_candidates(args, context)
   else
     let user = g:github_user
   endif
-  let gists = gist#list(user)
+  if get(g:, 'unite_gist_recursive_loading', 0)
+    try
+      " the function will be implemented to gist-vim in next version.
+      let gists = gist#list_recursively(user)
+    catch /E117.*/
+      " exists("*gist#list_recursively") could not be used while this is the
+      " first time to call an autoload function of gist-vim.
+      " Thus catch "E117: Unknown function" exception to check if there is a
+      " newly implemented function or not.
+      echo 'g:unite_gist_recursive_loading was specified but gist#list_recursively could not be found.'
+      echo 'Make sure that you are using a latest gist-vim. This call will ignore the option and use gist#list instead.'
+      " use gist#list instead
+      let gists = gist#list(user)
+    endtry
+  else
+    let gists = gist#list(user)
+  endif
   return map(gists, '{
         \ "abbr": s:format_gist(v:val),
         \ "word": v:val["id"],
